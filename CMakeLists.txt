@@ -10,10 +10,15 @@ project(jungle-sprout)
 
 
 set(SOURCE_FILES main.cpp
-        math_utils.cpp
-        math_utils.h
-        noise.cpp
-        noise.h)
+        noise/math_utils.cpp
+        noise/math_utils.h
+        noise/perlin.cpp
+        noise/perlin.h
+        io/bitmap_utils.cpp
+        io/bitmap_utils.h
+        noise/voronoi.cpp
+        noise/voronoi.h
+)
 add_executable(jungle-sprout ${SOURCE_FILES})
 include_directories(/usr/local/include)
 

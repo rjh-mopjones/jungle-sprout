@@ -42,42 +42,51 @@ void VoronoiDiagram::generateVoronoi(){
         colors.push_back({ static_cast<unsigned char>(std::rand() % 256), static_cast<unsigned char>(std::rand() % 256), static_cast<unsigned char>(std::rand() % 256) });
     }
 
-    for (int iter = 0; iter < iterations; ++iter) {
-        // Assign each pixel to the nearest point
+    for (int y = 0; y < height; ++y) {
+        pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
+        for (int x = 0; x < width; ++x) {
+            Point currentPoint = { static_cast<float>(x), static_cast<float>(y), -1 };
+            int nearestPointIndex = findNearestPoint(currentPoint, points);
+            int pixelIndex = x * 3;
+            if (x == 0 || x == width - 1 || y == 0 || y == height - 1 ||
+                findNearestPoint({ static_cast<float>(x - 1), static_cast<float>(y), -1 }, points) != nearestPointIndex ||
+                findNearestPoint({ static_cast<float>(x + 1), static_cast<float>(y), -1 }, points) != nearestPointIndex ||
+                findNearestPoint({ static_cast<float>(x), static_cast<float>(y - 1), -1 }, points) != nearestPointIndex ||
+                findNearestPoint({ static_cast<float>(x), static_cast<float>(y + 1), -1 }, points) != nearestPointIndex) {
+                // Border pixel
+                pixels[y][pixelIndex] = 255;
+                pixels[y][pixelIndex + 1] = 255;
+                pixels[y][pixelIndex + 2] = 255;
+            } else {
+                // Inside the cell
+                pixels[y][pixelIndex] = 0;
+                pixels[y][pixelIndex + 1] = 0;
+                pixels[y][pixelIndex + 2] = 0;
+            }
+        }
+    }
+
+    // Lloyd's relaxation algorithm: move each point to the centroid of its Voronoi cell
+    for (size_t i = 0; i < points.size(); ++i) {
+        float sumX = 0, sumY = 0;
+        int count = 0;
+
         for (int y = 0; y < height; ++y) {
-            pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
             for (int x = 0; x < width; ++x) {
-                Point currentPoint = { static_cast<float>(x), static_cast<float>(y), -1 };
-                int nearestPointIndex = findNearestPoint(currentPoint, points);
                 int pixelIndex = x * 3;
-                pixels[y][pixelIndex] = colors[nearestPointIndex].r;
-                pixels[y][pixelIndex + 1] = colors[nearestPointIndex].g;
-                pixels[y][pixelIndex + 2] = colors[nearestPointIndex].b;
+                if (pixels[y][pixelIndex] == colors[i].r
+                    && pixels[y][pixelIndex + 1] == colors[i].g
+                    && pixels[y][pixelIndex + 2] == colors[i].b) {
+                    sumX += static_cast<float>(x);
+                    sumY += static_cast<float>(y);
+                    count++;
+                }
             }
         }
 
-        // Lloyd's relaxation algorithm: move each point to the centroid of its Voronoi cell
-        for (size_t i = 0; i < points.size(); ++i) {
-            float sumX = 0, sumY = 0;
-            int count = 0;
-
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    int pixelIndex = x * 3;
-                    if (pixels[y][pixelIndex] == colors[i].r
-                        && pixels[y][pixelIndex + 1] == colors[i].g
-                        && pixels[y][pixelIndex + 2] == colors[i].b) {
-                        sumX += static_cast<float>(x);
-                        sumY += static_cast<float>(y);
-                        count++;
-                    }
-                }
-            }
-
-            if (count > 0) {
-                points[i].x = sumX / count;
-                points[i].y = sumY / count;
-            }
+        if (count > 0) {
+            points[i].x = sumX / count;
+            points[i].y = sumY / count;
         }
     }
 }

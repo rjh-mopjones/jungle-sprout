@@ -9,7 +9,7 @@ int main()
 {
     const int windowWidth = 1024;
     const int windowHeight = 1024;
-    const int seed = 50;
+    const int seed = 65;
     const int width = windowWidth;
     const int height = windowHeight;
 
@@ -17,7 +17,7 @@ int main()
                             100.0, 6, 1, 1);
     createBMP("perlin.bmp", width, height, perlinNoise.pixels);
 
-    VoronoiDiagram voronoiDiagram(seed, height, width, 6, 6);
+    VoronoiDiagram voronoiDiagram(seed, height, width, 10, 12);
     createBMP("voronoi.bmp", width, height, voronoiDiagram.pixels);
 
     return 0;

@@ -2,8 +2,7 @@
 // Created by Rory Hedderman on 26/12/2023.
 //
 
-#include "perlin.h"
-#include "math_utils.h"
+#include "noise.h"
 
 PerlinNoise::PerlinNoise(unsigned int seed, int height, int width, float amplitude,
                          float resolution, int octaves, float contrast, float frequency) {
@@ -18,12 +17,12 @@ PerlinNoise::PerlinNoise(unsigned int seed, int height, int width, float amplitu
     this->amplitude = amplitude;
 
     // Initialize permutation table with a random seed
+    srand(seed);
     for (int i = 0; i < 256; ++i) {
         p[i] = p[i + 256] = rand() % 256;
     }
 
     // Shuffle the array based on the seed
-    srand(seed);
     for (int i = 0; i < 256; ++i) {
         int j = rand() % 256;
         std::swap(p[i], p[j]);

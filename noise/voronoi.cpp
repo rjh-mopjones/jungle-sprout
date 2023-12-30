@@ -2,8 +2,7 @@
 // Created by Rory Hedderman on 27/12/2023.
 //
 
-#include <iostream>
-#include "voronoi.h"
+#include "noise.h"
 
 float VoronoiDiagram::distance(const Point& p1, const Point& p2) {
     return std::sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
@@ -46,7 +45,7 @@ void VoronoiDiagram::generateVoronoi(){
 
 
     for (int i = 0; i < numPoints ; ++i) {
-        points.push_back({ static_cast<float>(std::rand() % width),
+       points.push_back({ static_cast<float>(std::rand() % width),
                            static_cast<float>(std::rand() % height),
                            i
         });
@@ -106,7 +105,7 @@ void VoronoiDiagram::generateVoronoi(){
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
-        std::cout << "time of iteration "<< iter << ", duration in ms: " << duration.count() << std::endl;
+//        std::cout << "time of iteration "<< iter << ", duration in ms: " << duration.count() << std::endl;
 
     }
 

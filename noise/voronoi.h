@@ -10,14 +10,6 @@
 #include <cmath>
 #include <limits>
 #include <set>
-#include <chrono>
-
-
-struct Point {
-    float x, y;
-    int id;
-    std::vector<std::pair<int, int>> borderPoints;
-};
 
 struct VoronoiCell {
     unsigned char r, g, b;

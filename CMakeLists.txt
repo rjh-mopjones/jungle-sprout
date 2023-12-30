@@ -18,6 +18,9 @@ set(SOURCE_FILES main.cpp
         io/bitmap_utils.h
         noise/voronoi.cpp
         noise/voronoi.h
+        noise/worley.cpp
+        noise/worley.h
+        noise/noise.h
 )
 add_executable(jungle-sprout ${SOURCE_FILES})
 include_directories(/usr/local/include)

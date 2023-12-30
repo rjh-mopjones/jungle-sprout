@@ -17,7 +17,7 @@ int main()
                             100.0, 6, 1, 1);
     createBMP("perlin.bmp", width, height, perlinNoise.pixels);
 
-    VoronoiDiagram voronoiDiagram(seed, height, width, 10, 12);
+    VoronoiDiagram voronoiDiagram(seed, height, width, 5, 10);
     createBMP("voronoi.bmp", width, height, voronoiDiagram.pixels);
 
     return 0;

@@ -13,6 +13,7 @@
 struct Point {
     float x, y;
     int id;
+    std::vector<std::pair<int, int>> borderPoints;
 };
 
 struct Color {

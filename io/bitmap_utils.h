@@ -23,8 +23,8 @@ struct BMPHeader {
     uint32_t imageSize;   // Size of the raw image data
     int32_t ppmX;         // Pixels per meter in X axis
     int32_t ppmY;         // Pixels per meter in Y axis
-    uint32_t colors;      // Number of colors used (0 for full color)
-    uint32_t importantColors; // Number of important colors (0 for all)
+    uint32_t colors;      // Number of voronoiCells used (0 for full color)
+    uint32_t importantColors; // Number of important voronoiCells (0 for all)
 };
 #pragma pack(pop)
 void createBMP(const char* filename, int width, int height, uint8_t** imageData);

@@ -37,39 +37,47 @@ VoronoiDiagram::VoronoiDiagram(unsigned int seed, int height, int width, int ite
 void VoronoiDiagram::generateVoronoi(){
     srand(seed);
     pixels = new uint8_t*[height];
+    pixelCell = new uint8_t*[height];
     for (int y = 0; y < height; ++y) {
         pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
+        pixelCell[y] = new uint8_t[width * 3]; // 3 bytes per not needed
     }
+
 
 
     for (int i = 0; i < numPoints ; ++i) {
         points.push_back({ static_cast<float>(std::rand() % width),
                            static_cast<float>(std::rand() % height),
-                           i });
-        colors.push_back({ static_cast<unsigned char>(10 + (i*10)),
-                           static_cast<unsigned char>(10 + (i*10)),
-                           static_cast<unsigned char>(10 + (i*10)) });
+                           i
+        });
+        voronoiCells.push_back({static_cast<unsigned char>(0),
+                                static_cast<unsigned char>(0),
+                                static_cast<unsigned char>(0),
+                                i
+        });
     }
 
     for (int iter = 0; iter < iterations; ++iter) {
-            for (int y = 0; y < height; ++y) {
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
                     Point currentPoint = { static_cast<float>(x), static_cast<float>(y), -1 };
+                    std::pair<int,int> coords = std::pair<int,int>(x, y);
                     int nearestPointIndex = findNearestPoint(currentPoint, points);
                     int pixelIndex = x * 3;
-                    pixels[y][pixelIndex] = colors[nearestPointIndex].r;
-                    pixels[y][pixelIndex + 1] = colors[nearestPointIndex].g;
-                    pixels[y][pixelIndex + 2] = colors[nearestPointIndex].b;
+                    pixels[y][pixelIndex] = voronoiCells[nearestPointIndex].r;
+                    pixels[y][pixelIndex + 1] = voronoiCells[nearestPointIndex].g;
+                    pixels[y][pixelIndex + 2] = voronoiCells[nearestPointIndex].b;
+                    pixelCell[y][pixelIndex] = voronoiCells[nearestPointIndex].cellId;
+                    pixelCell[y][pixelIndex + 1 ] = 0;
+
                     if (iter == iterations -1 &&
                             (findNearestPoint({ static_cast<float>(x - 1), static_cast<float>(y), -1 }, points) != nearestPointIndex ||
                             findNearestPoint({ static_cast<float>(x + 1), static_cast<float>(y), -1 }, points) != nearestPointIndex ||
                             findNearestPoint({ static_cast<float>(x), static_cast<float>(y - 1), -1 }, points) != nearestPointIndex ||
                             findNearestPoint({ static_cast<float>(x), static_cast<float>(y + 1), -1 }, points) != nearestPointIndex)) {
-                        // Border pixel
-                        points[nearestPointIndex].borderPoints.push_back(std::pair<int, int>(x, y));
-//                        pixels[y][pixelIndex] = 255;
-//                        pixels[y][pixelIndex + 1] = 255;
-//                        pixels[y][pixelIndex + 2] = 255;
+                        //border
+                        pixelCell[y][pixelIndex + 1] = 1;
                     }
                 }
         }
@@ -82,7 +90,7 @@ void VoronoiDiagram::generateVoronoi(){
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
                     int pixelIndex = x * 3;
-                    if (pixels[y][pixelIndex] == colors[i].r && pixels[y][pixelIndex + 1] == colors[i].g && pixels[y][pixelIndex + 2] == colors[i].b) {
+                    if (voronoiCells[i].cellId == pixelCell[y][pixelIndex]){
                         sumX += static_cast<float>(x);
                         sumY += static_cast<float>(y);
                         count++;
@@ -95,18 +103,25 @@ void VoronoiDiagram::generateVoronoi(){
                 points[i].y = sumY / count;
             }
         }
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+
+        std::cout << "time of iteration "<< iter << ", duration in ms: " << duration.count() << std::endl;
+
     }
 
-    int borderThickness = 2;
-    for (Point point: points) {
-        for (std::pair<int,int> coords : point.borderPoints){
-            for (int b = 0; b < borderThickness; b++){
-                int dx = coords.first + b;
-                int dy = coords.second + b;
-                if (dx < width && dy < height) {
-                    pixels[dy][(dx * 3)] = 255;
-                    pixels[dy][(dx * 3) + 1] = 255;
-                    pixels[dy][(dx * 3) + 2] = 255;
+    int borderThickness = 4;
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int normThickness = borderThickness/2;
+            for (int b = -normThickness; b < normThickness; b++){
+                int dx = x + b;
+                int pixelIndex = dx*3;
+                int dy = y + b;
+                if (dy>0 && dx>0 && dx < width && dy < height && pixelCell[y][pixelIndex + 1]) {
+                    pixels[dy][pixelIndex] = 255;
+                    pixels[dy][pixelIndex + 1] = 255;
+                    pixels[dy][pixelIndex + 2] = 255;
                 }
             }
         }

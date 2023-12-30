@@ -9,6 +9,9 @@
 #include <vector>
 #include <cmath>
 #include <limits>
+#include <set>
+#include <chrono>
+
 
 struct Point {
     float x, y;
@@ -16,8 +19,9 @@ struct Point {
     std::vector<std::pair<int, int>> borderPoints;
 };
 
-struct Color {
+struct VoronoiCell {
     unsigned char r, g, b;
+    int cellId;
 };
 
 class VoronoiDiagram {
@@ -31,8 +35,9 @@ private:
     void generateVoronoi();
 
     std::vector<Point> points;
-    std::vector<Color> colors;
+    std::vector<VoronoiCell> voronoiCells;
     unsigned int seed;
+    uint8_t** pixelCell;
     int height;
     int width;
     int iterations;

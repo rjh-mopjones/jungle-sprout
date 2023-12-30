@@ -81,9 +81,9 @@ void PerlinNoise::generatePerlin() {
         totalAmplitude += pow(1/amplitude, i);
     }
 
-    for (int x = 0; x < width; ++x) {
-        this->pixels[x] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
-        for (int  y= 0; y < height; ++y) {
+    for (int y = 0; y < height; ++y) {
+        this->pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
+        for (int x = 0; x < width; ++x) {
 
             // Generate Perlin noise values
             value = 0;
@@ -93,7 +93,7 @@ void PerlinNoise::generatePerlin() {
 
             for (int i = 0; i < octaves; i++)
             {
-                value += noise((x * frequency) / resolution, (y * frequency) / resolution) * amplitude;
+                value += noise((y * frequency) / resolution, (x * frequency) / resolution) * amplitude;
 
                 runningFreq*= 2;
                 runningAmp/= 2;
@@ -111,11 +111,11 @@ void PerlinNoise::generatePerlin() {
             // Map the noise value to grayscale color
             int color = (int)(((value + 1.0f) * 0.5f) * 255);
 
-            int pixelIndex = y * 3;
+            int pixelIndex = x * 3;
             // Set pixel color
-            pixels[x][pixelIndex] = color;
-            pixels[x][pixelIndex + 1] = color;
-            pixels[x][pixelIndex + 2] = color;
+            pixels[y][pixelIndex] = color;
+            pixels[y][pixelIndex + 1] = color;
+            pixels[y][pixelIndex + 2] = color;
         }
     }
 }

@@ -35,11 +35,14 @@ VoronoiDiagram::VoronoiDiagram(unsigned int seed, int height, int width, int ite
 
 void VoronoiDiagram::generateVoronoi(){
     srand(seed);
-    pixels = new uint8_t*[height];
-    pixelCell = new uint8_t*[height];
+    for (int x = 0; x < height; ++x) {
+
+
+    }
+    this->pixelData= new PixelData *[height];
+
     for (int y = 0; y < height; ++y) {
-        pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
-        pixelCell[y] = new uint8_t[width * 3]; // 3 bytes per not needed
+        this->pixelData[y] = new PixelData[width];
     }
 
 
@@ -61,14 +64,8 @@ void VoronoiDiagram::generateVoronoi(){
         for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
                     Point currentPoint = { static_cast<float>(x), static_cast<float>(y), -1 };
-                    std::pair<int,int> coords = std::pair<int,int>(x, y);
                     int nearestPointIndex = findNearestPoint(currentPoint, points);
-                    int pixelIndex = x * 3;
-                    pixels[y][pixelIndex] = voronoiCells[nearestPointIndex].r;
-                    pixels[y][pixelIndex + 1] = voronoiCells[nearestPointIndex].g;
-                    pixels[y][pixelIndex + 2] = voronoiCells[nearestPointIndex].b;
-                    pixelCell[y][pixelIndex] = voronoiCells[nearestPointIndex].cellId;
-                    pixelCell[y][pixelIndex + 1 ] = 0;
+                    pixelData[y][x].nearestPointId = voronoiCells[nearestPointIndex].cellId;
 
                     if (iter == iterations -1 &&
                             (findNearestPoint({ static_cast<float>(x - 1), static_cast<float>(y), -1 }, points) != nearestPointIndex ||
@@ -76,7 +73,7 @@ void VoronoiDiagram::generateVoronoi(){
                             findNearestPoint({ static_cast<float>(x), static_cast<float>(y - 1), -1 }, points) != nearestPointIndex ||
                             findNearestPoint({ static_cast<float>(x), static_cast<float>(y + 1), -1 }, points) != nearestPointIndex)) {
                         //border
-                        pixelCell[y][pixelIndex + 1] = 1;
+                        pixelData[y][x].borderPixel = true;
                     }
                 }
         }
@@ -88,8 +85,7 @@ void VoronoiDiagram::generateVoronoi(){
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
-                    int pixelIndex = x * 3;
-                    if (voronoiCells[i].cellId == pixelCell[y][pixelIndex]){
+                    if (voronoiCells[i].cellId == pixelData[y][x].nearestPointId){
                         sumX += static_cast<float>(x);
                         sumY += static_cast<float>(y);
                         count++;
@@ -105,7 +101,7 @@ void VoronoiDiagram::generateVoronoi(){
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
-//        std::cout << "time of iteration "<< iter << ", duration in ms: " << duration.count() << std::endl;
+        std::cout << "time of iteration "<< iter << ", duration in ms: " << duration.count() << std::endl;
 
     }
 
@@ -115,12 +111,11 @@ void VoronoiDiagram::generateVoronoi(){
             int normThickness = borderThickness/2;
             for (int b = -normThickness; b < normThickness; b++){
                 int dx = x + b;
-                int pixelIndex = dx*3;
                 int dy = y + b;
-                if (dy>0 && dx>0 && dx < width && dy < height && pixelCell[y][pixelIndex + 1]) {
-                    pixels[dy][pixelIndex] = 255;
-                    pixels[dy][pixelIndex + 1] = 255;
-                    pixels[dy][pixelIndex + 2] = 255;
+                if (dy>0 && dx>0 && dx < width && dy < height && pixelData[y][x].borderPixel) {
+                    pixelData[dy][dx].r = 255;
+                    pixelData[dy][dx].g = 255;
+                    pixelData[dy][dx].b = 255;
                 }
             }
         }

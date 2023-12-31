@@ -15,6 +15,15 @@ struct Point {
     int id;
 };
 
+struct PixelData {
+    uint8_t r = 0;
+    uint8_t g = 0;
+    uint8_t b = 0;
+    bool borderPixel = false;
+    int nearestPointId = -1;
+};
+
+
 #include "math_utils.h"
 #include "perlin.h"
 #include "voronoi.h"

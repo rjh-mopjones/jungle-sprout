@@ -4,7 +4,7 @@
 
 #include "bitmap_utils.h"
 
-void createBMP(const char* filename, int width, int height, uint8_t** imageData) {
+void createBMP(const char* filename, int width, int height, PixelData** pixelData) {
     // Create and fill the BMP header
     BMPHeader bmpHeader;
     bmpHeader.signature = 0x4D42; // "BM"
@@ -34,35 +34,12 @@ void createBMP(const char* filename, int width, int height, uint8_t** imageData)
     for (int i = height - 1; i >= 0; --i) {
         for (int j = 0; j < width; ++j) {
             // Write the color values in reverse order (BGR)
-            file.put(imageData[i][j * 3 + 2]); // Blue
-            file.put(imageData[i][j * 3 + 1]); // Green
-            file.put(imageData[i][j * 3]);     // Red
+            file.put(pixelData[i][j].b); // Blue
+            file.put(pixelData[i][j].g); // Green
+            file.put(pixelData[i][j].r);     // Red
         }
     }
 
     // Close the file
     file.close();
-}
-
-void runBMPExample() {
-    const int width = 256;
-    const int height = 256;
-    uint8_t** imageData = new uint8_t*[height];
-    for (int i = 0; i < height; ++i) {
-        imageData[i] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
-        for (int j = 0; j < width * 3; ++j) {
-            imageData[i][j * 3] = static_cast<uint8_t>((j * 255) / (width - 1));             // Red
-            imageData[i][j * 3 + 1] = static_cast<uint8_t>((j * 255) / (width - 1));    // Blue
-            imageData[i][j * 3 + 2] = static_cast<uint8_t>((255 - j * 255) / (width - 1));    // Blue
-        }
-    }
-
-    // Create BMP file
-    createBMP("output.bmp", width, height, imageData);
-
-    // Clean up memory
-    for (int i = 0; i < height; ++i) {
-        delete[] imageData[i];
-    }
-    delete[] imageData;
 }

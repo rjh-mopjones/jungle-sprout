@@ -19,7 +19,7 @@ struct VoronoiCell {
 class VoronoiDiagram {
 public:
     VoronoiDiagram(unsigned int seed, int height, int width, int iterations, int numPoints);
-    uint8_t** pixels;
+    PixelData** pixelData;
 
 private:
     float distance(const Point& p1, const Point& p2);
@@ -29,7 +29,6 @@ private:
     std::vector<Point> points;
     std::vector<VoronoiCell> voronoiCells;
     unsigned int seed;
-    uint8_t** pixelCell;
     int height;
     int width;
     int iterations;

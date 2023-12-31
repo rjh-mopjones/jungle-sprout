@@ -18,10 +18,10 @@ WorleyNoise::WorleyNoise(unsigned int seed, int height, int width, int numPoints
                            i
         });
     }
-    this->pixels = new uint8_t*[height];
+    this->pixelData= new PixelData *[height];
 
     for (int y = 0; y < height; ++y) {
-        this->pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
+        this->pixelData[y] = new PixelData[width];
     }
     generateWorley();
 }
@@ -53,11 +53,10 @@ void WorleyNoise::generateWorley() {
             // Map the noise value to a grayscale color
             int color = static_cast<int>(noiseValue * 255);
 
-            int pixelIndex = x * 3;
             // Set pixel color
-            pixels[y][pixelIndex] = color;
-            pixels[y][pixelIndex + 1] = color;
-            pixels[y][pixelIndex + 2] = color;
+            pixelData[y][x].r = color;
+            pixelData[y][x].g = color;
+            pixelData[y][x].b = color;
         }
     }
 }

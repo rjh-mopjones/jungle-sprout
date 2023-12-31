@@ -14,8 +14,7 @@ class PerlinNoise {
 public:
     PerlinNoise(unsigned int seed, int height, int width, float amplitude,
                 float resolution, int octaves, float contrast, float frequency);
-
-    uint8_t** pixels;
+    PixelData** pixelData;
 
 private:
     double fade(double t);

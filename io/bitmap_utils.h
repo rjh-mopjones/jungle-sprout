@@ -6,8 +6,10 @@
 #define JUNGLE_SPROUT_BITMAP_UTILS_H
 
 #include <fstream>
+#include "../noise/noise.h"
 
 #pragma pack(push, 1) // Ensure byte alignment
+
 struct BMPHeader {
     uint16_t signature;   // "BM" for BMP files
     uint32_t fileSize;    // Size of the BMP file in bytes
@@ -27,6 +29,6 @@ struct BMPHeader {
     uint32_t importantColors; // Number of important voronoiCells (0 for all)
 };
 #pragma pack(pop)
-void createBMP(const char* filename, int width, int height, uint8_t** imageData);
+void createBMP(const char* filename, int width, int height, PixelData** imageData);
 
 #endif //JUNGLE_SPROUT_BITMAP_UTILS_H

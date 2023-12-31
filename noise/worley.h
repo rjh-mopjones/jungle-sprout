@@ -15,8 +15,8 @@ class WorleyNoise {
 public:
 
     WorleyNoise(unsigned int seed, int height, int width, int numPoints);
+    PixelData** pixelData;
 
-    uint8_t** pixels;
 private:
 
     float noise(float x, float y);

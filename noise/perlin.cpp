@@ -69,7 +69,7 @@ double PerlinNoise::noise(double x, double y) {
 
 void PerlinNoise::generatePerlin() {
 
-    pixels = new uint8_t*[height];
+    pixelData= new PixelData *[height];
 
     float value;
     float initFreq = frequency;
@@ -81,7 +81,7 @@ void PerlinNoise::generatePerlin() {
     }
 
     for (int y = 0; y < height; ++y) {
-        this->pixels[y] = new uint8_t[width * 3]; // 3 bytes per pixel for RGB
+        this->pixelData[y] = new PixelData[width]; // 3 bytes per pixel for RGB
         for (int x = 0; x < width; ++x) {
 
             // Generate Perlin noise values
@@ -112,9 +112,9 @@ void PerlinNoise::generatePerlin() {
 
             int pixelIndex = x * 3;
             // Set pixel color
-            pixels[y][pixelIndex] = color;
-            pixels[y][pixelIndex + 1] = color;
-            pixels[y][pixelIndex + 2] = color;
+            pixelData[y][x].r = color;
+            pixelData[y][x].g = color;
+            pixelData[y][x].b = color;
         }
     }
 }
